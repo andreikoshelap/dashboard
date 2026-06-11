@@ -1,59 +1,57 @@
-# ErpFront
+# gatto dashboard (Angular)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.5.
+Precision-ledger dashboard over the Slice 1–2 backend: monthly revenue/expenses/profit,
+per-account breakdown, and a natural-language "ask the ledger" box wired to the agent.
 
-## Development server
-
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Run
 
 ```bash
-ng generate component component-name
+# 1) fresh Angular app (standalone is the default in Angular 19+)
+ng new gatto-dashboard --style=css --routing=false --skip-tests
+cd gatto-dashboard
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Copy these three into `src/app/` (they're version-agnostic):
+
+```
+src/app/dashboard.component.ts
+src/app/ledger-api.service.ts
+src/app/ledger.models.ts
+```
+
+Then wire two things in the project's generated files. Naming differs by Angular
+version (`app.ts`/`App` in v20+, `app.component.ts`/`AppComponent` in v18–19) — edit
+whichever your project has:
+
+1. **Provide HttpClient** — in `src/app/app.config.ts`, ADD to the `providers` array
+   (don't remove what's already there):
+   ```ts
+   import { provideHttpClient, withFetch } from '@angular/common/http';
+   // providers: [ ...existing, provideHttpClient(withFetch()) ]
+   ```
+
+2. **Render the dashboard** — in the root component (`app.ts` or `app.component.ts`),
+   import `DashboardComponent` and make its template just:
+   ```ts
+   import { DashboardComponent } from './dashboard.component';
+   // @Component({ imports: [DashboardComponent], template: `<app-dashboard />` })
+   ```
+   (`app.component.ts` in this folder is a ready example for the classic naming.)
+
+Run it:
 
 ```bash
-ng generate --help
+# backend in another terminal (Laravel project):  php artisan serve   # :8000
+ng serve --proxy-config proxy.conf.json                                # :4200
+# open http://localhost:4200
 ```
 
-## Building
+The proxy forwards `/api/*` to Laravel on :8000 — no CORS config needed in dev.
+For production, build the Angular app and serve it from Laravel's `public/` or a CDN
+with a CORS policy allowing the frontend origin.
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Notes
+- No charting library — the monthly chart is hand-rolled SVG (zero extra deps).
+- All figures use tabular numerals; numbers come from the API, never the browser.
+- The ask box posts to `/api/ask`; the first response takes a few seconds (LLM + tools).
+- If `ng new` rejects `--routing=false`, just answer the prompt with "no".
