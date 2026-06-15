@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { LedgerApiService } from './ledger-api.service';
 import { AccountRow, MonthRow } from './ledger.models';
 import { DICT, Lang } from './i18n';
+import { MarkdownPipe } from './shared/markdown.pipe';
 
 interface Bar { x: number; y: number; w: number; h: number; cls: string; }
 interface Group { label: string; bars: Bar[]; }
@@ -10,7 +11,7 @@ interface Group { label: string; bars: Bar[]; }
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, MarkdownPipe],
   template: `
     <div class="wrap">
       <header class="head">
@@ -104,7 +105,7 @@ interface Group { label: string; bars: Bar[]; }
             </button>
           </div>
           @if (answer()) {
-            <p class="answer">{{ answer() }}</p>
+            <div class="ask-answer markdown-body" [innerHTML]="answer() | markdown"></div>
           }
           <p class="hint">{{ t().askHint }}</p>
         </section>

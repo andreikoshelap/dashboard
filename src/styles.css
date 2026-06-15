@@ -1,1 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
+/* styles.scss */
+.markdown-body table { border-collapse: collapse; width: 100%; margin: .5rem 0; }
+.markdown-body th, .markdown-body td {
+  border: 1px solid var(--border, #d0d0d0);
+  padding: .4rem .6rem;
+  text-align: right;
+}
+.markdown-body th:first-child, .markdown-body td:first-child { text-align: left; }
+.markdown-body code { background: rgba(0,0,0,.06); padding: .1rem .3rem; border-radius: 3px; }
