@@ -1,7 +1,9 @@
-/* styles.scss */
+/* styles.css */
+:root { --line: #dfe4ea; }
+
 .markdown-body table { border-collapse: collapse; width: 100%; margin: .5rem 0; }
 .markdown-body th, .markdown-body td {
-  border: 1px solid var(--border, #d0d0d0);
+  border: 1px solid var(--line, #d0d0d0);
   padding: .4rem .6rem;
   text-align: right;
 }
